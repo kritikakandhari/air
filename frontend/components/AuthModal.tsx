@@ -38,11 +38,23 @@ export default function AuthModal() {
           <h3 className="text-[22px] font-semibold mt-4 text-[#222]">Log in or sign up</h3>
         </div>
         <form onSubmit={submit} className="space-y-4">
-          <div>
-            <input className="input" type="text" placeholder="Phone number or email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+          <div className="border border-[#b0b0b0] rounded-lg overflow-hidden flex flex-col focus-within:border-black focus-within:ring-1 focus-within:ring-black transition-all">
+            {m === "signup" && (
+              <input className="w-full px-4 py-3 border-b border-[#b0b0b0] outline-none text-base" type="text" placeholder="Full name" value={name} onChange={(e) => setName(e.target.value)} required />
+            )}
+            <input className={`w-full px-4 py-3 outline-none text-base ${m === "signup" ? "border-b border-[#b0b0b0]" : "border-b border-[#b0b0b0]"}`} type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
+            <input className="w-full px-4 py-3 outline-none text-base" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
           </div>
-          {err && <p role="alert" className="text-[#c13515] text-sm">{err}</p>}
-          <button disabled={busy} type="button" onClick={submit} className="btn-primary w-full py-3.5 text-base font-semibold">{busy ? "Please wait..." : "Continue"}</button>
+          {err && <p role="alert" className="text-[#c13515] text-sm font-medium">{err}</p>}
+          <button disabled={busy} type="submit" className="btn-primary w-full py-3.5 text-base font-semibold">{busy ? "Please wait..." : "Continue"}</button>
+          
+          <div className="text-center mt-3 text-sm text-[#222]">
+            {m === "login" ? (
+              <span>{"Don't have an account? "} <button type="button" onClick={() => { setMode("signup"); setErr(""); }} className="font-semibold underline hover:text-black">Sign up</button></span>
+            ) : (
+              <span>{"Already have an account? "} <button type="button" onClick={() => { setMode("login"); setErr(""); }} className="font-semibold underline hover:text-black">Log in</button></span>
+            )}
+          </div>
         </form>
         
         <div className="flex items-center gap-4 my-6 text-[13px] text-mute"><span className="flex-1 h-px bg-[#ddd]" />or<span className="flex-1 h-px bg-[#ddd]" /></div>
