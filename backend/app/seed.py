@@ -1,5 +1,6 @@
 """Seed data: hosts, guests, 28 listings with photos, amenities, bookings and reviews."""
 import random
+import os
 from datetime import date, timedelta
 from sqlalchemy.orm import Session
 from . import models
@@ -135,6 +136,21 @@ def seed(db: Session):
     for i, (title, city, state, lat, lng, ptype, cat, price, mg, br, ba, pool) in enumerate(LISTINGS):
         p = POOLS[pool]
         gallery = [p[i % len(p)], INTERIORS[i % 10], INTERIORS[(i + 3) % 10], p[(i + 1) % len(p)], INTERIORS[(i + 5) % 10]]
+        
+        # Override for first 4 listings to use ALL images from their local folder
+        if i < 4:
+            try:
+                # Next.js public directory
+                img_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'frontend', 'public', 'images', str(i + 1))
+                if os.path.exists(img_dir):
+                    files = sorted([f for f in os.listdir(img_dir) if f.endswith(('.avif', '.webp', '.jpg', '.png', '.jpeg'))])
+                    if len(files) >= 5:
+                        gallery = [f'/images/{i+1}/{f}' for f in files[:5]]
+                    else:
+                        print(f'Warning: Not enough images in folder {i+1}')
+            except Exception as e:
+                print('Error reading local images', e)
+
         l = models.Listing(
             host_id=hosts[i % 4].id, title=title, property_type=ptype, category=cat, city=city, state=state,
             country="India", address=f"{city}, {state}", lat=lat, lng=lng, price_per_night=price,
