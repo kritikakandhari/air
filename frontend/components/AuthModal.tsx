@@ -12,15 +12,30 @@ export default function AuthModal() {
   if (!authModal) return null;
   const m = mode ?? authModal.mode;
 
-  const submit = async (e: FormEvent) => {
-    e.preventDefault(); setErr(""); setBusy(true);
+  const submit = async (e?: FormEvent) => {
+    if (e) e.preventDefault();
+    setErr(""); setBusy(true);
     try {
       if (m === "login") await login(email, password); else await signup(name, email, password);
       toast(m === "login" ? "Welcome back!" : "Welcome to Airbnb! Your account is ready.");
       const cb = authModal.onSuccess; closeAuth(); setMode(null); cb?.();
     } catch (e: any) { setErr(e.message); } finally { setBusy(false); }
   };
-  const demo = (em: string) => { setEmail(em); setPassword("password123"); setMode("login"); setErr(""); };
+
+  const googleLogin = async () => {
+    setErr(""); setBusy(true);
+    try {
+      await login("user@gmail.com", "google123");
+      toast("Logged in with Google!");
+      const cb = authModal.onSuccess; closeAuth(); setMode(null); cb?.();
+    } catch (e) {
+      try {
+        await signup("Google User", "user@gmail.com", "google123");
+        toast("Signed up with Google!");
+        const cb = authModal.onSuccess; closeAuth(); setMode(null); cb?.();
+      } catch (err: any) { setErr("Google login failed"); }
+    } finally { setBusy(false); }
+  };
 
   return (
     <Modal title="Log in or sign up" hideHeader={true} onClose={() => { closeAuth(); setMode(null); setErr(""); }}>
@@ -60,7 +75,7 @@ export default function AuthModal() {
         <div className="flex items-center gap-4 my-6 text-[13px] text-mute"><span className="flex-1 h-px bg-[#ddd]" />or<span className="flex-1 h-px bg-[#ddd]" /></div>
         
         <div className="flex justify-center gap-4 mb-2">
-          <button type="button" onClick={() => toast("Google coming soon", "info")} className="w-[58px] h-[58px] rounded-xl border border-[#222] flex items-center justify-center hover:bg-soft transition bg-white">
+          <button type="button" onClick={googleLogin} className="w-[58px] h-[58px] rounded-xl border border-[#222] flex items-center justify-center hover:bg-soft transition bg-white">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="22px" height="22px">
               <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
               <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
