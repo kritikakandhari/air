@@ -1,99 +1,140 @@
-# Airbnb Clone — SDE Fullstack Assignment
+# 🏠 Airbnb Clone — Full-Stack Project
 
-A full-stack Airbnb-style marketplace: browse and search stays, view listings, book date ranges with availability
-protection, manage trips and wishlists, and host your own listings (full CRUD).
+A pixel-perfect full-stack Airbnb clone built with **Next.js 14 + FastAPI**, featuring real authentication, booking, host dashboard, wishlists, tabs for Homes / Experiences / Services, and a redesigned auth modal.
 
-**Stack:** Next.js 14 (App Router, TypeScript, Tailwind) · FastAPI · SQLAlchemy 2 · SQLite · JWT auth
+**GitHub:** https://github.com/kritikakandhari/air  
+**Live Demo (Vercel):** https://air-tau-woad.vercel.app  
 
-## Quick start
+---
 
-### 1. Backend (http://localhost:8000)
+## ✨ Features
+
+| Area | What's built |
+|---|---|
+| **Homepage tabs** | All / Homes / Experiences / Services — each tab shows its own content |
+| **Homes** | Destination cards, property sections (Goa, Lonavala, Pune, Karjat) with unique images |
+| **Experiences** | Popular Mumbai experiences, Weekend experiences carousel |
+| **Services** | Services category icons (Photography, Chefs, Training, Makeup, Hair) + Photography listings |
+| **Search** | Expanding search bar (Where / When / Who), category row, filters modal, infinite scroll |
+| **Auth Modal** | Airbnb-style login — email + password login, Sign up, **Google one-click login** |
+| **Logged-in Menu** | Wishlists, Trips, Messages, Profile, Notifications, Account settings, Become a host, Log out |
+| **Listing detail** | Photo grid, host info, amenities, availability calendar, price breakdown, reviews, map |
+| **Booking** | Date validation, guest limits, booking confirmation, My Trips, cancel bookings |
+| **Wishlists** | Heart toggle, saved listings page |
+| **Host Dashboard** | Create / edit / delete listings, reservations table, earnings |
+| **Seed Data** | 33+ listings across Goa, Pune, Karjat, Lonavala, Delhi, Goa, Rishikesh, Kasol and more |
+
+---
+
+## 🚀 Quick Start
+
+### Backend (runs on port 5001)
 ```bash
 cd backend
-python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
+python -m venv .venv
+.venv\Scripts\activate          # Windows
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --port 5001
 ```
-On first start the SQLite file `airbnb.db` is created and **seeded** (28 listings, 4 hosts, 11 guests, bookings, reviews).
-Interactive API docs: http://localhost:8000/docs
+First start auto-creates & seeds `airbnb.db` with listings, hosts, reviews.  
+API docs: http://localhost:5001/docs
 
-### 2. Frontend (http://localhost:3000)
+### Frontend (runs on port 3001)
 ```bash
 cd frontend
-cp .env.local.example .env.local        # NEXT_PUBLIC_API_URL=http://localhost:8000
 npm install
 npm run dev
 ```
+Opens at http://localhost:3001
 
-### Demo accounts (password `password123`)
-| Role | Email |
-|---|---|
-| Guest (has past + upcoming trips) | `guest@example.com` |
-| Host (owns listings + reservations) | `host@example.com` |
+---
 
-## Features (mapped to the brief)
-| Area | What's implemented |
-|---|---|
-| Home & search | Listing grid, expanding search bar (where / dates / guests), category row, filters modal (price, type, bedrooms, amenities, live result count), infinite scroll, search state in the URL |
-| Listing detail | Photo grid + fullscreen viewer, host info, amenities modal, availability calendar (booked nights crossed out), live price breakdown, reviews, OpenStreetMap map |
-| Booking | Server-side validation (past dates, max guests, own listing, overlap), mocked card/UPI/net-banking checkout, confirmation code, **My Trips** (upcoming / past / cancelled), cancel frees the dates |
-| Host | Create / edit / delete listings (URL or file upload), dashboard with listings, reservations table, earnings. Delete is blocked while upcoming reservations exist |
-| Airbnb feel | Sticky header + collapsing search pill, card photo carousels, heart wishlist, toasts, modals, skeleton loaders, guest-vs-host roles, review after a completed stay |
-| Placeholders | Messaging, social login, language/currency, help centre → "Coming soon" toasts |
+## 🔑 Demo Accounts
 
-## Architecture
-```
-frontend/ (Next.js)                         backend/ (FastAPI)
-  app/            routes (pages)              app/main.py        app + CORS + startup seed
-  components/     UI building blocks          app/routers/       auth · listings · bookings · wishlist · host
-  context/        auth, wishlist, toasts      app/services.py    pricing, availability, serialisers
-  lib/            api client, date helpers    app/schemas.py     request validation (pydantic)
-                                              app/models.py      SQLAlchemy schema
-                                              app/security.py    PBKDF2 hashing, JWT, auth dependencies
-                                              app/seed.py        sample data
-```
-Design decisions:
-- **Availability** lives in one place (`services.has_overlap`): `existing.check_in < new.check_out AND existing.check_out > new.check_in`
-  on *confirmed* bookings. Checkout day is free for the next check-in. Search, quote and booking all use it, and cancelling simply sets `status='cancelled'`.
-- **The server owns pricing.** The UI asks `/quote`; booking recomputes and stores the amounts, so the UI can't send a fake total.
-- **Auth** is JWT (7 days) in `localStorage`. A user can be both guest and host (`is_host`), like Airbnb.
-- Filters/search/category are URL params, so results are shareable and survive refresh.
-
-## Database schema
-```
-users(id, name, email*, password_hash, avatar_url, bio, is_host, is_superhost, created_at)
-listings(id, host_id→users, title, description, property_type, category, city, state, country, address, lat, lng,
-         price_per_night, cleaning_fee, max_guests, bedrooms, beds, bathrooms, rating_avg, review_count, created_at)
-listing_images(id, listing_id→listings, url, position)
-amenities(id, name*, icon)            listing_amenities(listing_id→listings, amenity_id→amenities)   -- many-to-many
-bookings(id, code*, listing_id→listings, guest_id→users, check_in, check_out, guests, nights, subtotal, cleaning_fee,
-         service_fee, total, status[confirmed|cancelled], payment_method, created_at)   CHECK(check_out > check_in)
-reviews(id, listing_id→listings, user_id→users, rating 1-5, comment, created_at)         UNIQUE(listing_id, user_id)
-wishlist(user_id→users, listing_id→listings, created_at)                                 PK(user_id, listing_id)
-```
-Indexes: `listings(city)`, `listings(category)`, `bookings(listing_id, check_in, check_out)`. Foreign keys cascade on delete (SQLite `PRAGMA foreign_keys=ON`).
-`rating_avg` / `review_count` are denormalised and recomputed whenever a review is added.
-
-## API overview
-| Method | Path | Notes |
+| Role | Email | Password |
 |---|---|---|
-| POST | `/api/auth/signup` · `/api/auth/login` | returns `{token, user}` |
-| GET | `/api/auth/me` · POST `/api/auth/become-host` | |
-| GET | `/api/listings` | `q, check_in, check_out, guests, min_price, max_price, category, property_type, amenities, bedrooms, sort, page, page_size` |
-| GET | `/api/listings/meta` | categories, amenities, property types, price range |
-| GET | `/api/listings/{id}` · `/availability` · `/quote` · `/reviews` | |
-| POST | `/api/listings/{id}/reviews` | only after a completed stay, once per listing |
-| POST | `/api/bookings` · GET `/api/bookings/me` · POST `/api/bookings/{id}/cancel` | 409 on overlapping dates |
-| GET/POST/DELETE | `/api/wishlist` · `/api/wishlist/{listing_id}` | |
-| GET/POST | `/api/host/listings` · PUT/DELETE `/api/host/listings/{id}` · GET `/api/host/bookings` | host only |
-| POST | `/api/uploads` | image upload (≤5 MB) |
+| Guest | `guest@example.com` | `password123` |
+| Host | `host@example.com` | `password123` |
+| Google Login | Click the **G** button | (auto sign-up) |
 
-## Deployment
-- **Backend → Render:** new Web Service from `backend/` (see `render.yaml`). Set `CORS_ORIGINS` to your Vercel URL.
-  On Render's free tier the disk is ephemeral, so SQLite resets on redeploy and the seed runs again. That's fine for a demo.
-- **Frontend → Vercel:** import `frontend/`, set `NEXT_PUBLIC_API_URL` to the Render URL.
+---
 
-## Assumptions
-- Currency is INR, service fee is 14% of the nightly subtotal, max stay is 90 nights.
-- Payments, messaging and social login are mocked. Listing photos are Unsplash stock images, and a broken URL falls back to a placeholder.
-- Two bookings submitted at the exact same instant could race on SQLite; a production DB would add a row lock or exclusion constraint.
+## 🛠 Tech Stack
+
+| Layer | Tech |
+|---|---|
+| Frontend | Next.js 14, TypeScript, Tailwind CSS, App Router |
+| Backend | FastAPI, SQLAlchemy 2, SQLite, Pydantic |
+| Auth | JWT (7-day tokens), PBKDF2 password hashing |
+| Images | Local AVIF/JPG + Unsplash + AI-generated |
+| Deploy | Vercel (frontend) + Render (backend) |
+
+---
+
+## 📁 Project Structure
+
+```
+airbnb-clone/
+├── frontend/               ← Next.js app
+│   ├── app/                ← Pages (home, listing, trips, wishlists, host)
+│   ├── components/         ← Header, SearchBar, AuthModal, ListingCard, etc.
+│   ├── context/            ← Auth, Wishlist, Toast providers
+│   └── public/images/      ← Local property images
+│
+└── backend/                ← FastAPI app
+    └── app/
+        ├── main.py         ← App entry + CORS + lifespan seed
+        ├── routers/        ← auth, listings, bookings, wishlist, host
+        ├── models.py       ← SQLAlchemy schema
+        ├── schemas.py      ← Pydantic request/response models
+        ├── seed.py         ← 33+ listings, 4 hosts, guests, bookings, reviews
+        └── security.py     ← JWT + password hashing
+```
+
+---
+
+## 🌐 API Overview
+
+| Method | Path | Description |
+|---|---|---|
+| POST | `/api/auth/signup` `/api/auth/login` | Returns `{token, user}` |
+| GET | `/api/listings` | Search with filters, pagination |
+| GET | `/api/listings/{id}` | Listing detail |
+| GET | `/api/listings/{id}/availability` | Blocked dates |
+| POST | `/api/bookings` | Create booking (validates overlap) |
+| GET | `/api/bookings/me` | My trips |
+| POST | `/api/bookings/{id}/cancel` | Cancel booking |
+| GET/POST | `/api/wishlist` | Saved listings |
+| GET/POST/PUT/DELETE | `/api/host/listings` | Host CRUD |
+
+---
+
+## 🗄 Database Schema
+
+```
+users         → id, name, email, password_hash, avatar_url, is_host, is_superhost
+listings      → id, host_id, title, city, state, price_per_night, category, lat, lng
+listing_images→ id, listing_id, url, position
+bookings      → id, listing_id, guest_id, check_in, check_out, total, status
+reviews       → id, listing_id, user_id, rating, comment
+wishlist      → user_id, listing_id
+amenities     → id, name, icon  (many-to-many with listings)
+```
+
+---
+
+## ☁️ Deployment
+
+- **Frontend → Vercel:** auto-deploys from `main` branch, `frontend/` folder  
+- **Backend → Render:** `backend/` folder, set `CORS_ORIGINS` to Vercel URL  
+- SQLite resets on Render redeploy (ephemeral disk) — seed re-runs automatically  
+
+---
+
+## 📝 Assumptions & Notes
+
+- Currency is **INR**, service fee is **14%** of nightly subtotal
+- Payments, real messaging and real social OAuth are mocked ("coming soon")
+- Google login button creates a demo account (`user@gmail.com / google123`)
+- Property images are a mix of local AVIF files and Unsplash stock photos
+- SQLite has no row-level locking; concurrent bookings could race (acceptable for demo)
