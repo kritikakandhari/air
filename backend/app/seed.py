@@ -43,6 +43,9 @@ LISTINGS = [
     ("Mountain-view stay above the Ganges", "Rishikesh", "Uttarakhand", 30.0869, 78.2676, "Guesthouse", "amazing-views", 3200, 3, 1, 1, "C"),
     ("Treehouse in a Coorg coffee estate", "Madikeri", "Karnataka", 12.4244, 75.7382, "Treehouse", "treehouses", 6900, 2, 1, 1, "C"),
     ("Farm stay among mango orchards", "Alibaug", "Maharashtra", 18.6414, 72.8722, "Farm stay", "farms", 5100, 6, 3, 2, "H"),
+    ("Luxury Penthouse in KP", "Pune", "Maharashtra", 18.5362, 73.8969, "Apartment", "trending", 14500, 6, 3, 3, "I"),
+    ("Cozy Studio in Baner", "Pune", "Maharashtra", 18.5590, 73.7868, "Apartment", "design", 3500, 2, 1, 1, "I"),
+    ("Villa with Pool in Koregaon Park", "Pune", "Maharashtra", 18.5362, 73.8969, "Villa", "amazing-pools", 22000, 8, 4, 4, "H"),
     ("Palace wing with city views", "Jaipur", "Rajasthan", 26.9124, 75.7873, "Palace", "castles", 18500, 6, 3, 3, "H"),
     ("Tiny home among the Nilgiri pines", "Ooty", "Tamil Nadu", 11.4102, 76.695, "Tiny home", "tiny-homes", 3600, 2, 1, 1, "C"),
     ("Lakeside mansion with a private garden", "Nainital", "Uttarakhand", 29.3919, 79.4542, "Mansion", "mansions", 16500, 10, 5, 5, "H"),
@@ -59,6 +62,8 @@ LISTINGS = [
     ("Penthouse with skyline views", "Hyderabad", "Telangana", 17.4239, 78.4738, "Apartment", "amazing-views", 7200, 4, 2, 2, "I"),
     ("Floating houseboat on Dal Lake", "Srinagar", "Jammu & Kashmir", 34.0837, 74.7973, "Houseboat", "lakefront", 6600, 4, 2, 1, "B"),
     ("Mansion with a private cinema room", "Lonavala", "Maharashtra", 18.7546, 73.4062, "Mansion", "mansions", 21000, 12, 6, 6, "H"),
+    ("Eco Retreat", "Karjat", "Maharashtra", 18.9102, 73.3239, "Farm stay", "farms", 4500, 4, 2, 2, "H"),
+    ("Riverfront Villa", "Karjat", "Maharashtra", 18.9220, 73.3320, "Villa", "amazing-views", 9800, 8, 4, 4, "H"),
 ]
 
 CAT_BLURB = {
