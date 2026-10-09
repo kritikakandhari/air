@@ -22,6 +22,8 @@ export default function GuestsPicker({ guests, onChange, max = 16 }: { guests: n
     <div className="divide-y divide-[#ebebeb]">
       <Row label="Adults" sub="Ages 13 or above" value={adults} min={1} onMinus={() => set(adults - 1, children)} onPlus={() => set(adults + 1, children)} />
       <Row label="Children" sub="Ages 2–12" value={children} min={0} onMinus={() => set(adults, children - 1)} onPlus={() => set(adults, children + 1)} />
+      <Row label="Infants" sub="Under 2" value={0} min={0} onMinus={() => {}} onPlus={() => {}} />
+      <Row label="Pets" sub="Bringing a service animal?" value={0} min={0} onMinus={() => {}} onPlus={() => {}} />
     </div>
   );
 }

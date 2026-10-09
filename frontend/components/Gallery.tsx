@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Grip, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Grip, X, Heart, Share } from "lucide-react";
 import SmartImage from "./SmartImage";
 
 export default function Gallery({ images, title, id }: { images: string[]; title: string; id: number }) {
@@ -28,23 +28,45 @@ export default function Gallery({ images, title, id }: { images: string[]; title
             </button>
           ))}
         </div>
-        <button onClick={() => setOpen(0)} className="absolute bottom-4 right-4 bg-white border border-ink rounded-lg px-4 py-1.5 text-sm font-semibold flex items-center gap-2 hover:bg-soft">
-          <Grip size={14} />Show all photos
+        <button onClick={() => setOpen(0)} className="hidden md:flex absolute bottom-6 right-6 bg-white px-4 py-1.5 rounded-lg border border-ink text-sm font-semibold gap-2 items-center hover:bg-soft hover:scale-105 transition shadow-sm">
+          <Grip size={16} />Show all photos
         </button>
       </div>
       {open !== null && (
-        <div className="fixed inset-0 z-[95] bg-black flex flex-col animate-fade" role="dialog" aria-modal="true" aria-label="Photo viewer">
-          <div className="flex items-center justify-between px-6 h-16 text-white">
-            <button aria-label="Close" onClick={() => setOpen(null)} className="p-2 rounded-full hover:bg-white/15"><X size={20} /></button>
-            <span className="text-sm">{open + 1} / {images.length}</span><span className="w-9" />
+        <div className="fixed inset-0 z-[95] bg-white flex flex-col animate-fade overflow-y-auto" role="dialog" aria-modal="true" aria-label="Photo tour">
+          <div className="sticky top-0 bg-white z-10 flex items-center justify-between px-6 h-16 border-b border-[#ddd]">
+            <button aria-label="Close" onClick={() => setOpen(null)} className="p-2 rounded-full hover:bg-soft"><ChevronLeft size={20} /></button>
+            <div className="flex gap-4">
+               <button className="flex items-center gap-2 underline text-sm font-medium hover:bg-soft px-3 py-1.5 rounded-lg"><Share size={16} /> Share</button>
+               <button className="flex items-center gap-2 underline text-sm font-medium hover:bg-soft px-3 py-1.5 rounded-lg"><Heart size={16}/> Save</button>
+            </div>
           </div>
-          <div className="flex-1 flex items-center justify-center gap-4 px-4 min-h-0">
-            <button aria-label="Previous photo" onClick={() => setOpen((open - 1 + images.length) % images.length)} className="w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shrink-0"><ChevronLeft /></button>
-            <SmartImage src={images[open]} seed={`${id}-${open}`} alt={`${title} photo ${open + 1}`} className="max-h-full max-w-full object-contain rounded-lg" />
-            <button aria-label="Next photo" onClick={() => setOpen((open + 1) % images.length)} className="w-11 h-11 rounded-full bg-white/90 flex items-center justify-center shrink-0"><ChevronRight /></button>
-          </div>
-          <div className="flex gap-2 justify-center p-4 overflow-x-auto no-scrollbar">
-            {images.map((s, i) => <button key={i} onClick={() => setOpen(i)} aria-label={`Photo ${i + 1}`} className={`w-16 h-12 rounded overflow-hidden shrink-0 ${i === open ? "ring-2 ring-white" : "opacity-60"}`}><SmartImage src={s} seed={`${id}-${i}`} alt="" className="w-full h-full object-cover" /></button>)}
+          <div className="max-w-5xl mx-auto w-full pt-8 pb-24 px-6 md:px-12">
+            <h2 className="text-[26px] font-semibold mb-8">Photo tour</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-16">
+              {["Living room", "Full kitchen", "Dining area", "Bedroom 1", "Bedroom 2", "Full bathroom 1", "Full bathroom 2", "Gym", "Pool"].map((cat, i) => (
+                <a key={i} href={`#photo-${i}`} className="flex flex-col gap-2 group/thumb">
+                  <div className="relative aspect-[4/3] rounded-lg overflow-hidden border border-transparent group-hover/thumb:border-[#222]">
+                     <SmartImage src={images[i % images.length]} seed={`${id}-${i}`} alt="" className="w-full h-full object-cover group-hover/thumb:brightness-90 transition" />
+                  </div>
+                  <div className="text-sm font-medium text-[#222]">{cat}</div>
+                </a>
+              ))}
+            </div>
+            
+            <div className="space-y-16">
+              {images.map((src, i) => (
+                <div key={i} id={`photo-${i}`} className="grid lg:grid-cols-[1fr_3fr] gap-8 scroll-mt-24">
+                  <div>
+                    <h3 className="text-2xl font-semibold mb-1">{["Living room", "Full kitchen", "Dining area", "Bedroom 1", "Bedroom 2", "Full bathroom 1", "Full bathroom 2", "Gym", "Pool"][i % 9]}</h3>
+                    {i === 0 && <p className="text-mute text-sm">Sofa bed &middot; Air conditioning &middot; Sound system &middot; TV</p>}
+                  </div>
+                  <div className="w-full relative">
+                    <SmartImage src={src} seed={`${id}-${i}`} alt="" className="w-full aspect-[4/3] object-cover rounded-xl" />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
