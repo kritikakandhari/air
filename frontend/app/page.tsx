@@ -99,8 +99,8 @@ function Explore() {
           <div className="space-y-14 pb-12 mt-4">
             <Section title="Popular homes in North Goa" subtitle="Indian coast with beach shacks" items={items.filter(l => l.city.includes("Goa") || l.city === "Candolim" || l.city === "Calangute" || l.city === "Mapusa" || l.city === "Assagao" || l.city === "Vagator")} loading={loading} />
             <Section title="Available in Lonavala this weekend" subtitle="Hill town near Mumbai with ancient caves" items={items.filter(l => l.city === "Lonavala" || l.state === "Maharashtra")} loading={loading} />
-            <Section title="Stay in Pune" subtitle="Maharashtra's university and culture hub" items={items} loading={loading} />
-            <Section title="Available in Karjat this weekend" subtitle="Hill town near Mumbai with treks" items={items} loading={loading} />
+            <Section title="Stay in Pune" subtitle="Maharashtra's university and culture hub" items={items.filter(l => l.city === "Pune" || (l.state === "Maharashtra" && l.city != "Lonavala"))} loading={loading} />
+            <Section title="Available in Karjat this weekend" subtitle="Hill town near Mumbai with treks" items={items.filter(l => l.city === "Karjat" || l.category === "camping" || l.category === "treehouses")} loading={loading} />
             
             <div className="relative">
               <h2 className="text-[22px] font-semibold mb-4">Explore experiences nearby</h2>
