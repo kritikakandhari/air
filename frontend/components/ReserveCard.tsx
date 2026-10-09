@@ -41,10 +41,9 @@ export default function ReserveCard({ l, ci, co, guests, booked, setDates, setGu
 
   return (
     <div id="reserve" ref={ref} className="border border-[#ddd] rounded-xl shadow-card p-6 bg-white">
-      <div className="mb-5">
-        <span className="text-lg text-mute line-through mr-1.5">{inr(l.price_per_night * (ci && co ? quote?.nights || 1 : 2))}</span>
-        <span className="text-[22px] font-bold">{inr(Math.floor(l.price_per_night * (ci && co ? quote?.nights || 1 : 2) * 0.9))}</span>
-        <span className="text-base text-[#222]"> for {ci && co ? quote?.nights || 1 : 2} nights</span>
+      <div className="flex items-baseline justify-between mb-5">
+        <div><span className="text-[22px] font-semibold">{inr(l.price_per_night)}</span> <span>night</span></div>
+        {l.review_count > 0 && <span className="text-sm flex items-center gap-1"><Star size={12} className="fill-ink" /><b>{l.rating.toFixed(2)}</b> · <span className="text-mute underline">{l.review_count} reviews</span></span>}
       </div>
       <div className="relative">
         <div className="border border-[#b0b0b0] rounded-lg">
@@ -73,26 +72,18 @@ export default function ReserveCard({ l, ci, co, guests, booked, setDates, setGu
         )}
       </div>
       {err && <p role="alert" className="text-[#c13515] text-sm mt-3">{err}</p>}
-      <div className="bg-[#f0f0f0] rounded-lg mt-4 py-2 px-3 text-center text-[13px] font-medium text-[#222]">
-        Free cancellation before 15 October
-      </div>
-      <button onClick={reserve} disabled={!!err && !!ci && !!co} className="btn-primary w-full py-3.5 mt-4 text-base font-semibold">{ci && co ? "Reserve" : "Check availability"}</button>
-      <p className="text-center text-[13px] mt-3 mb-6">You won't be charged yet</p>
+      <button onClick={reserve} disabled={!!err && !!ci && !!co} className="btn-primary w-full py-3.5 mt-4 text-base">{ci && co ? "Reserve" : "Check availability"}</button>
       {quote && (
         <>
+          <p className="text-center text-sm mt-3">You won't be charged yet</p>
           <div className="mt-5 space-y-3 text-base">
             <div className="flex justify-between"><span className="underline">{inr(quote.price_per_night)} × {quote.nights} night{quote.nights > 1 ? "s" : ""}</span><span>{inr(quote.subtotal)}</span></div>
             <div className="flex justify-between"><span className="underline">Cleaning fee</span><span>{inr(quote.cleaning_fee)}</span></div>
             <div className="flex justify-between"><span className="underline">Airbnb service fee</span><span>{inr(quote.service_fee)}</span></div>
           </div>
-          <div className="flex justify-between font-semibold text-base border-t border-[#ddd] mt-5 pt-5 mb-4"><span>Total before taxes</span><span>{inr(quote.total)}</span></div>
+          <div className="flex justify-between font-semibold text-base border-t border-[#ddd] mt-5 pt-5"><span>Total before taxes</span><span>{inr(quote.total)}</span></div>
         </>
       )}
-      <div className="flex justify-center mt-6">
-        <button className="flex items-center gap-2 text-[13px] font-medium text-mute hover:underline">
-          <span>🚩</span> Report this listing
-        </button>
-      </div>
     </div>
   );
 }

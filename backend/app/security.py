@@ -1,6 +1,5 @@
 """Password hashing, JWT tokens and auth dependencies."""
-from __future__ import annotations
-import os, hashlib, hmac, secrets; from typing import Optional
+import os, hashlib, hmac, secrets
 from datetime import datetime, timedelta, timezone
 import jwt
 from fastapi import Depends, Header, HTTPException
@@ -32,7 +31,7 @@ def create_token(user_id: int) -> str:
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
-def optional_user(authorization: Optional[str] = Header(default=None), db: Session = Depends(get_db)):
+def optional_user(authorization: str | None = Header(default=None), db: Session = Depends(get_db)):
     if not authorization or not authorization.lower().startswith("bearer "):
         return None
     try:

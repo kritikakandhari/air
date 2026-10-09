@@ -35,6 +35,10 @@ function Checkout() {
   }, [id, ci, co, guests, user]);
 
   if (!ci || !co) return <div className="py-32 text-center"><h1 className="text-2xl font-semibold">Pick your dates first</h1><Link href={`/listings/${id}`} className="btn-dark inline-block px-6 py-3 mt-6">Back to listing</Link></div>;
+  if (!loading && !user) return (
+    <div className="py-32 text-center"><h1 className="text-2xl font-semibold">Log in to finish booking</h1><p className="text-mute mt-2">Your dates are saved. Log in and we'll pick up where you left off.</p>
+      <button className="btn-primary px-8 py-3.5 mt-6" onClick={() => openAuth("login")}>Log in</button></div>
+  );
 
   const validate = () => {
     if (pay === "card") {
@@ -55,108 +59,69 @@ function Checkout() {
       router.push(`/trips?confirmed=${b.code}`);
     } catch (e: any) { setErr(e.message); setBusy(false); }
   };
-
-  const discount = quote ? Math.floor(quote.subtotal * 0.1) : 0;
-  const taxes = quote ? Math.floor((quote.subtotal - discount) * 0.05) : 0;
-  const finalTotal = quote ? quote.subtotal - discount + taxes : 0;
+  const opt = (k: Pay, label: string, I: any) => (
+    <label className={`flex items-center justify-between border rounded-xl p-4 cursor-pointer ${pay === k ? "border-ink bg-soft" : "border-[#ddd]"}`}>
+      <span className="flex items-center gap-3"><I size={22} strokeWidth={1.5} />{label}</span>
+      <input type="radio" name="pay" className="accent-ink w-5 h-5" checked={pay === k} onChange={() => setPay(k)} />
+    </label>
+  );
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12">
-      <div className="flex items-center gap-4 mb-10"><button aria-label="Back" onClick={() => router.back()} className="w-8 h-8 flex justify-center items-center rounded-full bg-[#f0f0f0] hover:bg-[#e0e0e0]"><ChevronLeft size={16} /></button><h1 className="text-[32px] font-semibold">Confirm and pay</h1></div>
-      <div className="grid lg:grid-cols-[1fr_400px] gap-x-24 gap-y-10">
-        <div className="space-y-6">
-          {!user ? (
-            <>
-              <div className="border border-[#ddd] rounded-2xl p-6 flex justify-between items-center shadow-sm">
-                <span className="text-lg font-medium">1. Log in or sign up</span>
-                <button className="btn-primary px-8 py-3 text-[15px]" onClick={() => openAuth("login")}>Continue</button>
+    <div className="detail-x py-10">
+      <div className="flex items-center gap-4 mb-10"><button aria-label="Back" onClick={() => router.back()} className="p-2 rounded-full hover:bg-soft"><ChevronLeft /></button><h1 className="text-[32px] font-semibold">Request to book</h1></div>
+      <div className="grid lg:grid-cols-[1fr_440px] gap-x-24 gap-y-10">
+        <div className="space-y-8">
+          <section>
+            <h2 className="text-[22px] font-semibold mb-4">Your trip</h2>
+            <div className="flex justify-between py-3"><div><div className="font-semibold">Dates</div><div className="text-mute">{fmtLong(ci)} → {fmtLong(co)}</div></div>
+              <Link href={`/listings/${id}?check_in=${ci}&check_out=${co}&guests=${guests}`} className="underline font-semibold">Edit</Link></div>
+            <div className="flex justify-between py-3"><div><div className="font-semibold">Guests</div><div className="text-mute">{guests} guest{guests > 1 ? "s" : ""}</div></div>
+              <Link href={`/listings/${id}?check_in=${ci}&check_out=${co}&guests=${guests}`} className="underline font-semibold">Edit</Link></div>
+          </section>
+          <hr className="border-[#ddd]" />
+          <section>
+            <h2 className="text-[22px] font-semibold mb-4">Pay with</h2>
+            <p className="text-mute text-sm mb-4">This is a demo checkout. No real payment is taken.</p>
+            <div className="space-y-3">{opt("card", "Credit or debit card", CreditCard)}{opt("upi", "UPI", Smartphone)}{opt("netbanking", "Net banking", Landmark)}</div>
+            {pay === "card" && (
+              <div className="mt-5 grid grid-cols-2 gap-3">
+                <input className="input col-span-2" inputMode="numeric" placeholder="Card number (any 16 digits)" maxLength={19} value={card.number}
+                  onChange={(e) => setCard({ ...card, number: e.target.value.replace(/\D/g, "").replace(/(.{4})/g, "$1 ").trim() })} />
+                <input className="input" placeholder="MM/YY" maxLength={5} value={card.exp}
+                  onChange={(e) => { let v = e.target.value.replace(/[^\d]/g, ""); if (v.length > 2) v = v.slice(0, 2) + "/" + v.slice(2, 4); setCard({ ...card, exp: v }); }} />
+                <input className="input" inputMode="numeric" placeholder="CVV" maxLength={3} value={card.cvv} onChange={(e) => setCard({ ...card, cvv: e.target.value.replace(/\D/g, "") })} />
+                <input className="input col-span-2" placeholder="Postal code" maxLength={8} value={card.zip} onChange={(e) => setCard({ ...card, zip: e.target.value })} />
               </div>
-              <div className="border border-[#ddd] rounded-2xl p-6 text-[#717171] text-lg">2. Add a payment method</div>
-              <div className="border border-[#ddd] rounded-2xl p-6 text-[#717171] text-lg">3. Proceed to payment</div>
-            </>
-          ) : (
-            <>
-              <div className="border border-[#ddd] rounded-2xl p-6 shadow-sm">
-                <h2 className="text-lg font-medium mb-6">1. Log in or sign up <span className="text-sm font-normal text-mute ml-2">(Logged in as {user.name})</span></h2>
-              </div>
-              <div className="border border-[#ddd] rounded-2xl p-6 shadow-sm">
-                <h2 className="text-lg font-medium mb-6">2. Add a payment method</h2>
-                <div className="space-y-3">
-                  <label className={`flex items-center justify-between border rounded-xl p-4 cursor-pointer ${pay === "card" ? "border-ink bg-soft" : "border-[#ddd]"}`}><span className="flex items-center gap-3"><CreditCard size={22} strokeWidth={1.5} />Credit or debit card</span><input type="radio" name="pay" className="accent-ink w-5 h-5" checked={pay === "card"} onChange={() => setPay("card")} /></label>
-                  <label className={`flex items-center justify-between border rounded-xl p-4 cursor-pointer ${pay === "upi" ? "border-ink bg-soft" : "border-[#ddd]"}`}><span className="flex items-center gap-3"><Smartphone size={22} strokeWidth={1.5} />UPI</span><input type="radio" name="pay" className="accent-ink w-5 h-5" checked={pay === "upi"} onChange={() => setPay("upi")} /></label>
-                </div>
-                {pay === "card" && (
-                  <div className="mt-5 grid grid-cols-2 gap-3">
-                    <input className="input col-span-2" placeholder="Card number" value={card.number} onChange={(e) => setCard({ ...card, number: e.target.value })} />
-                    <input className="input" placeholder="MM/YY" value={card.exp} onChange={(e) => setCard({ ...card, exp: e.target.value })} />
-                    <input className="input" placeholder="CVV" value={card.cvv} onChange={(e) => setCard({ ...card, cvv: e.target.value })} />
-                    <input className="input col-span-2" placeholder="Postal code" value={card.zip} onChange={(e) => setCard({ ...card, zip: e.target.value })} />
-                  </div>
-                )}
-                {pay === "upi" && <input className="input mt-5" placeholder="UPI ID" value={upi} onChange={(e) => setUpi(e.target.value)} />}
-              </div>
-              <div className="border border-[#ddd] rounded-2xl p-6 shadow-sm">
-                <h2 className="text-lg font-medium mb-6">3. Proceed to payment</h2>
-                {(fieldErr || err) && <p role="alert" className="text-[#c13515] mb-3">{fieldErr || err}</p>}
-                <button onClick={confirm} disabled={busy || !quote} className="btn-primary w-full py-4 text-base font-semibold">{busy ? "Confirming…" : "Confirm and pay"}</button>
-              </div>
-            </>
-          )}
+            )}
+            {pay === "upi" && <input className="input mt-5" placeholder="UPI ID (name@bank)" value={upi} onChange={(e) => setUpi(e.target.value)} />}
+            {pay === "netbanking" && <p className="mt-5 text-mute">You'll be redirected to your bank in a real checkout. Here we'll just confirm the booking.</p>}
+          </section>
+          <hr className="border-[#ddd]" />
+          <section><h2 className="text-[22px] font-semibold mb-2">Cancellation policy</h2><p className="text-mute">Free cancellation before check-in. After that, the first night is non-refundable.</p></section>
+          <hr className="border-[#ddd]" />
+          <section>
+            <p className="text-xs text-mute mb-4">By selecting the button below, I agree to the House Rules, Ground rules for guests and the Cancellation Policy.</p>
+            {(fieldErr || err) && <p role="alert" className="text-[#c13515] mb-3">{fieldErr || err}</p>}
+            <button onClick={confirm} disabled={busy || !quote} className="btn-primary px-10 py-4 text-base">{busy ? "Confirming…" : "Confirm and pay"}</button>
+          </section>
         </div>
         <aside>
           {l && (
-            <div>
-              <div className="border border-[#ddd] rounded-2xl p-6 shadow-sm bg-white mb-4">
-                <div className="flex gap-4 pb-6 border-b border-[#ddd]">
-                  <SmartImage src={l.images[0]} seed={l.id} alt="" className="w-[120px] h-[100px] rounded-lg object-cover" />
-                  <div className="min-w-0">
-                    <div className="font-semibold text-[15px] line-clamp-3 leading-snug text-[#222]">{l.title}</div>
-                    {l.review_count > 0 && <div className="text-[13px] flex items-center gap-1 mt-1 font-medium"><Star size={11} className="fill-ink" />{l.rating.toFixed(2)} ({l.review_count})</div>}
-                  </div>
-                </div>
-                
-                <div className="py-6 border-b border-[#ddd]">
-                  <div className="font-semibold text-[15px]">Free cancellation</div>
-                  <div className="text-[15px] text-[#222] mt-1">Cancel before 15 October for a full refund.</div>
-                  <button className="underline text-[15px] font-semibold mt-1">Full policy</button>
-                </div>
-
-                <div className="py-6 border-b border-[#ddd] space-y-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <div className="font-semibold text-[15px]">Dates</div>
-                      <div className="text-[15px] text-[#222] mt-1">{fmtLong(ci).split(',')[0]} - {fmtLong(co).split(',')[0]} {ci.split('-')[0]}</div>
-                    </div>
-                    <button className="font-semibold text-sm px-3 py-1 bg-[#f0f0f0] rounded-lg hover:bg-[#e0e0e0]">Change</button>
-                  </div>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <div className="font-semibold text-[15px]">Guests</div>
-                      <div className="text-[15px] text-[#222] mt-1">{guests} adult{guests > 1 ? "s" : ""}</div>
-                    </div>
-                    <button className="font-semibold text-sm px-3 py-1 bg-[#f0f0f0] rounded-lg hover:bg-[#e0e0e0]">Change</button>
-                  </div>
-                </div>
-
-                <div className="pt-6">
-                  <h2 className="text-[22px] font-semibold mb-6">Price details</h2>
-                  {quote ? (
-                    <div className="space-y-4 text-[15px] text-[#222]">
-                      <div className="flex justify-between"><span>{quote.nights} nights x {inr(quote.price_per_night)}</span><span>{inr(quote.subtotal)}</span></div>
-                      <div className="flex justify-between text-green-700"><span>Last-minute discount</span><span>-{inr(discount)}</span></div>
-                      <div className="flex justify-between"><span>Taxes</span><span>{inr(taxes)}</span></div>
-                      <div className="flex justify-between font-bold border-t border-[#ddd] pt-5 mt-5 text-[15px]"><span>Total INR</span><span>{inr(finalTotal)}</span></div>
-                      <button className="underline font-semibold text-[15px] mt-2">Price breakdown</button>
-                    </div>
-                  ) : <div className="h-24 skeleton rounded" />}
-                </div>
+            <div className="sticky top-28 border border-[#ddd] rounded-xl p-6">
+              <div className="flex gap-4 pb-6 border-b border-[#ddd]">
+                <SmartImage src={l.images[0]} seed={l.id} alt="" className="w-28 h-24 rounded-lg object-cover" />
+                <div className="min-w-0"><div className="text-xs text-mute">{l.property_type}</div><div className="font-medium line-clamp-2">{l.title}</div>
+                  {l.review_count > 0 && <div className="text-xs flex items-center gap-1 mt-1"><Star size={11} className="fill-ink" />{l.rating.toFixed(2)} ({l.review_count})</div>}</div>
               </div>
-              
-              {quote && (
-                <div className="bg-[#e7f5e8] rounded-xl p-4 flex items-center justify-center gap-2 text-green-800 font-medium text-[15px]">
-                  <span>🏷️</span> {inr(discount)} discount applied
+              <h2 className="text-[22px] font-semibold my-5">Price details</h2>
+              {quote ? (
+                <div className="space-y-3 text-base">
+                  <div className="flex justify-between"><span>{inr(quote.price_per_night)} × {quote.nights} night{quote.nights > 1 ? "s" : ""}</span><span>{inr(quote.subtotal)}</span></div>
+                  <div className="flex justify-between"><span>Cleaning fee</span><span>{inr(quote.cleaning_fee)}</span></div>
+                  <div className="flex justify-between"><span>Airbnb service fee</span><span>{inr(quote.service_fee)}</span></div>
+                  <div className="flex justify-between font-semibold border-t border-[#ddd] pt-4 mt-4"><span>Total (INR)</span><span>{inr(quote.total)}</span></div>
                 </div>
-              )}
+              ) : err ? <p className="text-[#c13515]">{err}</p> : <div className="h-24 skeleton rounded" />}
             </div>
           )}
         </aside>

@@ -45,10 +45,15 @@ export default function ListingCard({ l, query = "", nights = 0 }: { l: Listing;
         )}
       </div>
       <div className="pt-3">
-        <h3 className="font-semibold text-[15px] truncate">{l.title}</h3>
-        <p className="text-mute text-[15px] mt-0.5">
-          {nights > 0 ? <>{inr(l.price_per_night * nights)} for {nights} night{nights > 1 ? "s" : ""}</> : <>{inr(l.price_per_night * 2)} for 2 nights</>}
-          {l.review_count > 0 && <> • ★ {l.rating.toFixed(2)}</>}
+        <div className="flex justify-between gap-2">
+          <h3 className="font-semibold text-[15px] truncate">{l.city}, {l.state}</h3>
+          {l.review_count > 0 && <span className="flex items-center gap-1 text-[15px] shrink-0"><Star size={12} className="fill-ink" />{l.rating.toFixed(2)}</span>}
+        </div>
+        <p className="text-mute text-[15px] truncate">{l.title}</p>
+        <p className="text-mute text-[15px]">Hosted by {l.host.name.split(" ")[0]}</p>
+        <p className="mt-1 text-[15px]">
+          {nights > 0 ? <><span className="font-semibold">{inr(l.price_per_night * nights)}</span> for {nights} night{nights > 1 ? "s" : ""}</>
+            : <><span className="font-semibold">{inr(l.price_per_night)}</span> night</>}
         </p>
       </div>
     </Link>

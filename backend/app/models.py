@@ -6,8 +6,6 @@ users ─┬─< listings ─┬─< listing_images
        │             ├─>< amenities   (listing_amenities)
        │             └─< wishlist  >─ users
 """
-from __future__ import annotations
-from typing import Optional
 from datetime import datetime, date
 from sqlalchemy import (String, Integer, Float, Boolean, ForeignKey, Date, DateTime, Text, Table, Column,
                         UniqueConstraint, CheckConstraint, Index)
@@ -27,8 +25,8 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(80))
     email: Mapped[str] = mapped_column(String(120), unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(200))
-    avatar_url: Mapped[str] = mapped_column(String(300), nullable=True)
-    bio: Mapped[str] = mapped_column(Text, nullable=True)
+    avatar_url: Mapped[str | None] = mapped_column(String(300), nullable=True)
+    bio: Mapped[str | None] = mapped_column(Text, nullable=True)
     is_host: Mapped[bool] = mapped_column(Boolean, default=False)
     is_superhost: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
@@ -62,7 +60,7 @@ class Listing(Base):
     city: Mapped[str] = mapped_column(String(80))
     state: Mapped[str] = mapped_column(String(80))
     country: Mapped[str] = mapped_column(String(80), default="India")
-    address: Mapped[str] = mapped_column(String(200), nullable=True)
+    address: Mapped[str | None] = mapped_column(String(200), nullable=True)
     lat: Mapped[float] = mapped_column(Float, default=0.0)
     lng: Mapped[float] = mapped_column(Float, default=0.0)
     price_per_night: Mapped[int] = mapped_column(Integer)

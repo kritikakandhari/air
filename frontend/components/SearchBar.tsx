@@ -65,8 +65,13 @@ export default function SearchBar({ onDone }: { onDone?: () => void }) {
         </div>
         <span className="hidden md:block h-8 w-px bg-[#ddd]" />
         <div className={cell("in")} onClick={() => setSeg("in")}>
-          <div className="text-xs font-semibold">When</div>
-          <div className={`text-sm ${ci || co ? "" : "text-mute"}`}>{ci && co ? `${fmtShort(ci)} - ${fmtShort(co)}` : "Add dates"}</div>
+          <div className="text-xs font-semibold">Check in</div>
+          <div className={`text-sm ${ci ? "" : "text-mute"}`}>{ci ? fmtShort(ci) : "Add dates"}</div>
+        </div>
+        <span className="hidden md:block h-8 w-px bg-[#ddd]" />
+        <div className={cell("out")} onClick={() => setSeg("out")}>
+          <div className="text-xs font-semibold">Check out</div>
+          <div className={`text-sm ${co ? "" : "text-mute"}`}>{co ? fmtShort(co) : "Add dates"}</div>
         </div>
         <span className="hidden md:block h-8 w-px bg-[#ddd]" />
         <div className={`${cell("who")} flex items-center`} onClick={() => setSeg("who")} style={{ flex: 1.2 }}>

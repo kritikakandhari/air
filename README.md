@@ -1,5 +1,11 @@
 # Airbnb Clone — SDE Fullstack Assignment
 
+![Airbnb Logo](frontend/public/images/Airbnb-Logo.png)
+
+🚀 **Live Frontend (Vercel):** [https://air-tau-woad.vercel.app](https://air-tau-woad.vercel.app)
+🚀 **Live Backend API (Render):** [https://air-backend-syqu.onrender.com/docs](https://air-backend-syqu.onrender.com/docs)
+
+
 A full-stack Airbnb-style marketplace: browse and search stays, view listings, book date ranges with availability
 protection, manage trips and wishlists, and host your own listings (full CRUD).
 

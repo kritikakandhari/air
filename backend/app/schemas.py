@@ -1,7 +1,6 @@
 """Pydantic request bodies (validation lives here)."""
-from __future__ import annotations
 import re
-from datetime import date; from typing import Optional
+from datetime import date
 from pydantic import BaseModel, Field, field_validator
 
 _EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
@@ -47,7 +46,7 @@ class ListingIn(BaseModel):
     city: str = Field(min_length=2, max_length=80)
     state: str = Field(min_length=2, max_length=80)
     country: str = "India"
-    address: Optional[str] = None
+    address: str | None = None
     lat: float = Field(default=20.5937, ge=-90, le=90)
     lng: float = Field(default=78.9629, ge=-180, le=180)
     price_per_night: int = Field(gt=0, le=1_000_000)
