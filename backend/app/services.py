@@ -1,5 +1,6 @@
 """Business logic shared by routers: pricing, availability, serialisers."""
-import secrets
+from __future__ import annotations
+import secrets; from typing import Optional
 from datetime import date
 from fastapi import HTTPException
 from sqlalchemy import select, func
@@ -68,7 +69,7 @@ def host_dict(h: models.User) -> dict:
             "bio": h.bio, "joined_year": h.created_at.year}
 
 
-def listing_summary(l: models.Listing, wished: set[int] | None = None) -> dict:
+def listing_summary(l: models.Listing, wished: Optional[set[int]] = None) -> dict:
     return {"id": l.id, "title": l.title, "city": l.city, "state": l.state, "country": l.country,
             "property_type": l.property_type, "category": l.category, "price_per_night": l.price_per_night,
             "rating": l.rating_avg, "review_count": l.review_count, "max_guests": l.max_guests,
@@ -77,7 +78,7 @@ def listing_summary(l: models.Listing, wished: set[int] | None = None) -> dict:
             "is_wishlisted": l.id in (wished or set())}
 
 
-def listing_detail(l: models.Listing, wished: set[int] | None = None) -> dict:
+def listing_detail(l: models.Listing, wished: Optional[set[int]] = None) -> dict:
     d = listing_summary(l, wished)
     d.update({"description": l.description, "address": l.address, "cleaning_fee": l.cleaning_fee,
               "beds": l.beds, "bathrooms": l.bathrooms, "host": host_dict(l.host),
