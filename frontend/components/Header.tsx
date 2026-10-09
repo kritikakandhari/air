@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Globe } from "lucide-react";
 import Logo from "./Logo";
 import SearchBar, { CompactSearch } from "./SearchBar";
@@ -10,6 +10,8 @@ import { useAuth, useToast } from "@/context/Providers";
 export default function Header() {
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const sp = useSearchParams();
+  const currentTab = sp.get("tab") || "all";
   const { user, openAuth, logout } = useAuth();
   const { toast } = useToast();
   const [scrolled, setScrolled] = useState(false);
@@ -45,24 +47,22 @@ export default function Header() {
             <Link href="/" aria-label="Airbnb home" className="flex-1 basis-0"><Logo /></Link>
             <div className="hidden md:flex justify-center">
               {full ? (
-                <div className="flex gap-8 items-center pt-2">
-                  <button className="flex flex-col items-center gap-1 group text-ink hover:text-ink">
-                    <span className="text-2xl">🌍</span>
-                    <span className="text-[15px] font-medium border-b-2 border-ink pb-1">All</span>
-                  </button>
-                  <button className="flex flex-col items-center gap-1 group text-mute hover:text-ink">
-                    <span className="text-2xl">🏡</span>
-                    <span className="text-[15px] border-b-2 border-transparent pb-1">Homes</span>
-                  </button>
-                  <button className="flex flex-col items-center gap-1 group text-mute hover:text-ink">
-                    <span className="text-2xl">🎈</span>
-                    <span className="text-[15px] border-b-2 border-transparent pb-1">Experiences</span>
-                  </button>
-                  <button className="flex flex-col items-center gap-1 group text-mute hover:text-ink">
-                    <span className="text-2xl">🛎️</span>
-                    <span className="text-[15px] border-b-2 border-transparent pb-1">Services</span>
-                  </button>
-                </div>
+                                  <div className="flex gap-8 items-center pt-2">
+                    {[
+                      { id: 'all', label: 'All', icon: '🌍' },
+                      { id: 'homes', label: 'Homes', icon: '🏡' },
+                      { id: 'experiences', label: 'Experiences', icon: '🎈' },
+                      { id: 'services', label: 'Services', icon: '🛎️' }
+                    ].map(t => {
+                      const active = currentTab === t.id;
+                      return (
+                        <Link key={t.id} href={`/?tab=${t.id}`} className={`flex flex-col items-center gap-1 group ${active ? 'text-ink' : 'text-mute hover:text-ink'}`}>
+                          <span className="text-2xl">{t.icon}</span>
+                          <span className={`text-[15px] pb-1 border-b-2 ${active ? 'font-medium border-ink' : 'border-transparent'}`}>{t.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
               ) : <CompactSearch onOpen={() => setExpanded(true)} />}
             </div>
             <div className="md:hidden flex-1"><CompactSearch onOpen={() => setExpanded(true)} /></div>

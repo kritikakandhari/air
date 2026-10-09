@@ -12,6 +12,10 @@ const PAGE_SIZE = 48;
 
 function Explore() {
   const sp = useSearchParams();
+  const currentTab = sp.get("tab") || "all";
+  const showHomes = currentTab === "all" || currentTab === "homes";
+  const showExp = currentTab === "all" || currentTab === "experiences";
+  const showServ = currentTab === "all" || currentTab === "services";
   const router = useRouter();
   const [meta, setMeta] = useState<Meta | null>(null);
   const [items, setItems] = useState<Listing[]>([]);
