@@ -64,6 +64,13 @@ LISTINGS = [
     ("Mansion with a private cinema room", "Lonavala", "Maharashtra", 18.7546, 73.4062, "Mansion", "mansions", 21000, 12, 6, 6, "H"),
     ("Eco Retreat", "Karjat", "Maharashtra", 18.9102, 73.3239, "Farm stay", "farms", 4500, 4, 2, 2, "H"),
     ("Riverfront Villa", "Karjat", "Maharashtra", 18.9220, 73.3320, "Villa", "amazing-views", 9800, 8, 4, 4, "H"),
+    ("Boutique Heritage Home in Camp", "Pune", "Maharashtra", 18.5156, 73.8778, "Home", "mansions", 6000, 4, 2, 2, "H"),
+    ("Modern Loft in Viman Nagar", "Pune", "Maharashtra", 18.5665, 73.9122, "Loft", "design", 4200, 3, 1, 1, "I"),
+    ("Rustic Cabin in the Woods", "Karjat", "Maharashtra", 18.9100, 73.3300, "Cabin", "cabins", 3800, 2, 1, 1, "H"),
+    ("Luxury Farmhouse with Pool", "Karjat", "Maharashtra", 18.9300, 73.3400, "Farm stay", "amazing-pools", 15000, 10, 4, 4, "H"),
+    ("Hilltop Villa with Infinity Pool", "Lonavala", "Maharashtra", 18.7500, 73.4000, "Villa", "amazing-pools", 18000, 8, 4, 4, "H"),
+    ("Cozy Cottage near Tiger Point", "Lonavala", "Maharashtra", 18.7400, 73.4100, "Cottage", "countryside", 5000, 4, 2, 2, "H"),
+    ("Mountain View Retreat", "Lonavala", "Maharashtra", 18.7600, 73.4200, "Home", "amazing-views", 7500, 6, 3, 3, "H"),
 ]
 
 CAT_BLURB = {
