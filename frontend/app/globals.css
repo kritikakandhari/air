@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { -webkit-font-smoothing: antialiased; }
+body { color: #222; background: #fff; font-size: 14px; }
+button { cursor: pointer; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.container-x { max-width: 2520px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
+@media (min-width: 744px) { .container-x { padding-left: 40px; padding-right: 40px; } }
+@media (min-width: 1128px) { .container-x { padding-left: 80px; padding-right: 80px; } }
+.detail-x { max-width: 1280px; margin: 0 auto; padding-left: 16px; padding-right: 16px; }
+@media (min-width: 744px) { .detail-x { padding-left: 40px; padding-right: 40px; } }
+@media (min-width: 1128px) { .detail-x { padding-left: 80px; padding-right: 80px; } }
+.btn-primary { background: linear-gradient(to right, #E61E4D 0%, #E31C5F 50%, #D70466 100%); color: #fff; border-radius: 8px; font-weight: 600; transition: transform .1s; }
+.btn-primary:active { transform: scale(.98); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+.btn-dark { background: #222; color: #fff; border-radius: 8px; font-weight: 600; }
+.btn-dark:hover { background: #000; }
+.btn-ghost { border: 1px solid #222; border-radius: 8px; font-weight: 600; }
+.btn-ghost:hover { background: #F7F7F7; }
+.input { width: 100%; border: 1px solid #b0b0b0; border-radius: 8px; padding: 14px 12px; outline: none; background: #fff; }
+.input:focus { border-color: #222; box-shadow: 0 0 0 1px #222; }
+:focus-visible { outline: 2px solid #222; outline-offset: 2px; }
+@keyframes shimmer { 0% { background-position: -400px 0 } 100% { background-position: 400px 0 } }
+.skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 37%, #f0f0f0 63%); background-size: 800px 100%; animation: shimmer 1.3s infinite linear; }
