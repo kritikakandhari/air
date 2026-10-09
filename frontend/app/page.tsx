@@ -8,7 +8,7 @@ import { api, Listing, Meta } from "@/lib/api";
 import { nightsBetween } from "@/lib/dates";
 import { SearchX } from "lucide-react";
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 48;
 
 function Explore() {
   const sp = useSearchParams();
