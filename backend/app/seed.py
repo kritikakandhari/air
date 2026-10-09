@@ -159,7 +159,7 @@ def seed(db: Session):
                          f"bedroom{'s' if br > 1 else ''}. Spend your days exploring the neighbourhood and come back to a "
                          f"comfortable, well-kept space.\n\nYour host is happy to share tips on where to eat, what to see "
                          f"and how to get around. Self check-in is available and the host is a message away for anything you need."),
-            images=[models.ListingImage(url=U.format(g), position=k) for k, g in enumerate(gallery)],
+            images=[models.ListingImage(url=(g if g.startswith('/') else U.format(g)), position=k) for k, g in enumerate(gallery)],
             amenities=[amen[n] for n in _amenities_for(cat, ptype)])
         listings.append(l)
     db.add_all(listings); db.flush()
