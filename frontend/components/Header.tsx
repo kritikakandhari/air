@@ -69,13 +69,20 @@ export default function Header() {
             <nav className="flex-1 basis-0 flex items-center justify-end gap-1">
               <Link href={user?.is_host ? "/host" : "/host"} className="hidden lg:block text-sm font-medium px-4 py-3 rounded-full hover:bg-soft">
                 {user?.is_host ? "Switch to hosting" : "Become a host"}</Link>
-              <button onClick={() => toast("Language and region settings are coming soon", "info")} aria-label="Language and region" className="p-3 rounded-full hover:bg-soft hidden sm:block"><Globe size={16} /></button>
-              <div ref={menuRef} className="relative">
-                <button onClick={() => setMenu((m) => !m)} aria-haspopup="menu" aria-expanded={menu} aria-label="Account menu"
-                  className="flex items-center gap-3 border border-[#ddd] rounded-full pl-3 pr-2 py-1.5 hover:shadow-card transition-shadow">
-                  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', fill: 'none', height: '16px', width: '16px', stroke: 'currentcolor', strokeWidth: 3, overflow: 'visible' }}><g fill="none"><path d="M2 16h28M2 24h28M2 8h28"></path></g></svg>
-                  {user?.avatar_url ? <img src={user.avatar_url} alt="" className="w-8 h-8 rounded-full bg-[#eee]" /> : <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', height: '32px', width: '32px', fill: '#717171' }}><path d="M16 .7C7.56.7.7 7.56.7 16S7.56 31.3 16 31.3 31.3 24.44 31.3 16 24.44.7 16 .7zm0 28c-4.02 0-7.6-1.88-9.93-4.81a12.43 12.43 0 0 1 6.45-4.4A6.5 6.5 0 0 1 9.5 14a6.5 6.5 0 0 1 13 0 6.51 6.51 0 0 1-3.02 5.5 12.42 12.42 0 0 1 6.45 4.4A13.93 13.93 0 0 1 16 28.7z"></path></svg>}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { if (!user) { setMenu(false); openAuth("login"); } else { toast("Account settings coming soon", "info"); } }}
+                  aria-label="Account"
+                  className="w-[38px] h-[38px] rounded-full border border-[#ddd] hover:shadow-card flex items-center justify-center transition-shadow bg-white">
+                  {user?.avatar_url
+                    ? <img src={user.avatar_url} alt="" className="w-[34px] h-[34px] rounded-full bg-[#eee]" />
+                    : <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', height: '28px', width: '28px', fill: '#717171' }}><path d="M16 .7C7.56.7.7 7.56.7 16S7.56 31.3 16 31.3 31.3 24.44 31.3 16 24.44.7 16 .7zm0 28c-4.02 0-7.6-1.88-9.93-4.81a12.43 12.43 0 0 1 6.45-4.4A6.5 6.5 0 0 1 9.5 14a6.5 6.5 0 0 1 13 0 6.51 6.51 0 0 1-3.02 5.5 12.42 12.42 0 0 1 6.45 4.4A13.93 13.93 0 0 1 16 28.7z"></path></svg>}
                 </button>
+                <div ref={menuRef} className="relative">
+                  <button onClick={() => setMenu((m) => !m)} aria-haspopup="menu" aria-expanded={menu} aria-label="Main menu"
+                    className="w-[38px] h-[38px] rounded-full border border-[#ddd] hover:shadow-card flex items-center justify-center transition-shadow bg-white">
+                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', fill: 'none', height: '16px', width: '16px', stroke: 'currentcolor', strokeWidth: 3, overflow: 'visible' }}><g fill="none"><path d="M2 16h28M2 24h28M2 8h28"></path></g></svg>
+                  </button>
                 {menu && (
                   <div role="menu" className="absolute right-0 top-full mt-2 w-60 bg-white rounded-xl shadow-pop py-2 z-50 animate-pop">
                     {user ? (
@@ -114,6 +121,7 @@ export default function Header() {
                     )}
                   </div>
                 )}
+                </div>
               </div>
             </nav>
           </div>
