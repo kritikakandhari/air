@@ -114,8 +114,15 @@ function Detail() {
             ))}
           </div>
           {divider}
-          <p className={`whitespace-pre-line text-base leading-6 ${more ? "" : "line-clamp-5"}`}>{l.description}</p>
-          <button onClick={() => setMore(!more)} className="font-semibold underline mt-3">{more ? "Show less" : "Show more"}</button>
+          <p className="whitespace-pre-line text-base leading-6 line-clamp-5">{l.description}</p>
+          <button onClick={() => setMore(true)} className="font-semibold flex items-center gap-1 underline mt-3">Show more <ChevronRight size={16} /></button>
+          {more && (
+            <Modal title="About this space" onClose={() => setMore(false)}>
+              <div className="p-6 pt-0">
+                <p className="whitespace-pre-line text-base leading-6 text-[#222]">{l.description}</p>
+              </div>
+            </Modal>
+          )}
           {divider}
           <div className="flex justify-between items-end mb-6">
              <h2 className="text-[22px] font-semibold">Where you'll sleep</h2>
