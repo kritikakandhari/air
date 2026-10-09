@@ -115,7 +115,7 @@ function Detail() {
           </div>
           {divider}
           <p className="whitespace-pre-line text-base leading-6 line-clamp-5">{l.description}</p>
-          <button onClick={() => setMore(true)} className="font-semibold flex items-center gap-1 underline mt-3">Show more <ChevronRight size={16} /></button>
+          <button onClick={() => setMore(true)} className="flex items-center gap-1 mt-4 px-4 py-2 rounded-lg border border-[#222] font-semibold text-base hover:bg-[#f7f7f7] transition">Show more <ChevronRight size={16} /></button>
           {more && (
             <Modal title="About this space" onClose={() => setMore(false)}>
               <div className="p-6 pt-0">
